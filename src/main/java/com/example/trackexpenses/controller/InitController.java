@@ -9,6 +9,8 @@ import com.example.trackexpenses.repository.BudgetRepository;
 import com.example.trackexpenses.repository.CategoryRepository;
 import com.example.trackexpenses.repository.ExpenseRepository;
 import com.example.trackexpenses.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Slf4j
+@Tag(name = "Initialization", description = "Data initialization and seeding")
 public class InitController {
 
     private final UserRepository userRepository;
@@ -32,6 +35,7 @@ public class InitController {
     private final ExpenseRepository expenseRepository;
     private final BudgetRepository budgetRepository;
 
+    @Operation(summary = "Initialize all mock data")
     @PostMapping("/all")
     public ResponseEntity<Map<String, Object>> initializeAllData() {
         Map<String, Object> result = new HashMap<>();
@@ -63,6 +67,7 @@ public class InitController {
         }
     }
 
+    @Operation(summary = "Initialize default categories")
     @PostMapping("/categories")
     public ResponseEntity<String> initializeCategories() {
         String[][] defaultCategories = {
@@ -93,6 +98,7 @@ public class InitController {
         return ResponseEntity.ok("Categories initialized: " + created + " new categories created");
     }
 
+    @Operation(summary = "Initialize test users")
     @PostMapping("/users")
     public ResponseEntity<String> initializeUsers() {
         int created = 0;
@@ -136,6 +142,7 @@ public class InitController {
         return ResponseEntity.ok("Users initialized: " + created + " new users created");
     }
 
+    @Operation(summary = "Initialize sample expenses")
     @PostMapping("/expenses")
     public ResponseEntity<String> initializeExpenses() {
         User testUser = userRepository.findByUsername("testuser").orElse(null);
@@ -189,6 +196,7 @@ public class InitController {
         return ResponseEntity.ok("Sample expenses created: " + created + " expenses added");
     }
 
+    @Operation(summary = "Initialize sample budgets")
     @PostMapping("/budgets")
     public ResponseEntity<String> initializeBudgets() {
         User testUser = userRepository.findByUsername("testuser").orElse(null);
@@ -239,6 +247,7 @@ public class InitController {
         return ResponseEntity.ok("Sample budgets created: " + created + " budgets added");
     }
 
+    @Operation(summary = "Clear all data")
     @PostMapping("/clear")
     public ResponseEntity<String> clearAllData() {
         try {
@@ -252,6 +261,7 @@ public class InitController {
         }
     }
 
+    @Operation(summary = "Get data status")
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> getDataStatus() {
         Map<String, Object> status = new HashMap<>();

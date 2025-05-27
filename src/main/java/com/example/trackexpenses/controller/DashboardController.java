@@ -1,12 +1,14 @@
 package com.example.trackexpenses.controller;
 
-import com.example.trackexpenses.dto.BudgetDto;
 import com.example.trackexpenses.dto.CategoryDto;
 import com.example.trackexpenses.dto.ExpenseDto;
 import com.example.trackexpenses.service.BudgetService;
 import com.example.trackexpenses.service.CategoryService;
 import com.example.trackexpenses.service.ExpenseService;
 import com.example.trackexpenses.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +19,11 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @RestController
 @RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Tag(name = "Dashboard", description = "Analytics and reporting")
 public class DashboardController {
 
     private final ExpenseService expenseService;
@@ -29,6 +31,7 @@ public class DashboardController {
     private final CategoryService categoryService;
     private final UserService userService;
 
+    @Operation(summary = "Get dashboard summary")
     @GetMapping
     public ResponseEntity<DashboardSummary> getDashboardSummary() {
         LocalDate now = LocalDate.now();
@@ -49,18 +52,20 @@ public class DashboardController {
                 .toList());
 
         summary.setTotalCategories(categoryService.findAllCategories().size());
-
         summary.setExpensesByCategory(expenseService.getExpensesByCategory(startOfMonth, endOfMonth));
 
         return ResponseEntity.ok(summary);
     }
 
+    @Operation(summary = "Get monthly expenses")
     @GetMapping("/monthly/{year}")
-    public ResponseEntity<Map<String, BigDecimal>> getMonthlyExpenses(@PathVariable Integer year) {
+    public ResponseEntity<Map<String, BigDecimal>> getMonthlyExpenses(
+            @Parameter(description = "Year") @PathVariable Integer year) {
         Map<String, BigDecimal> monthlyExpenses = expenseService.getMonthlyExpenses(year);
         return ResponseEntity.ok(monthlyExpenses);
     }
 
+    @Operation(summary = "Get overview statistics")
     @GetMapping("/overview")
     public ResponseEntity<Map<String, Object>> getOverview() {
         Map<String, Object> overview = new HashMap<>();
@@ -91,6 +96,7 @@ public class DashboardController {
         return ResponseEntity.ok(overview);
     }
 
+    @Operation(summary = "Get recent activity")
     @GetMapping("/recent-activity")
     public ResponseEntity<Map<String, Object>> getRecentActivity() {
         Map<String, Object> activity = new HashMap<>();
@@ -113,16 +119,17 @@ public class DashboardController {
         return ResponseEntity.ok(activity);
     }
 
+    @Operation(summary = "Get budget status")
     @GetMapping("/budget-status")
     public ResponseEntity<List<Map<String, Object>>> getBudgetStatus() {
         LocalDate now = LocalDate.now();
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
 
-        List<BudgetDto> currentBudgets = budgetService.findBudgetsByYearAndMonth(currentYear, currentMonth);
+        List<com.example.trackexpenses.dto.BudgetDto> currentBudgets = budgetService.findBudgetsByYearAndMonth(currentYear, currentMonth);
         List<Map<String, Object>> budgetStatus = new ArrayList<>();
 
-        for (BudgetDto budget : currentBudgets) {
+        for (com.example.trackexpenses.dto.BudgetDto budget : currentBudgets) {
             Map<String, Object> status = new HashMap<>();
             status.put("category", budget.getCategory().getName());
             status.put("budgetAmount", budget.getAmount());
@@ -143,8 +150,10 @@ public class DashboardController {
         return ResponseEntity.ok(budgetStatus);
     }
 
+    @Operation(summary = "Get spending trends")
     @GetMapping("/trends/{months}")
-    public ResponseEntity<Map<String, Object>> getSpendingTrends(@PathVariable Integer months) {
+    public ResponseEntity<Map<String, Object>> getSpendingTrends(
+            @Parameter(description = "Number of months") @PathVariable Integer months) {
         Map<String, Object> trends = new HashMap<>();
         LocalDate now = LocalDate.now();
 
@@ -170,6 +179,7 @@ public class DashboardController {
         return ResponseEntity.ok(trends);
     }
 
+    @Operation(summary = "Get category breakdown")
     @GetMapping("/category-breakdown")
     public ResponseEntity<Map<String, Object>> getCategoryBreakdown() {
         LocalDate now = LocalDate.now();
