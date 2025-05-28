@@ -5,10 +5,12 @@ import com.example.trackexpenses.dto.BudgetDto;
 import com.example.trackexpenses.service.BudgetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,19 +24,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(name = "Budgets", description = "Budget management")
+@SecurityRequirement(name = "Bearer Authentication")
 public class BudgetController {
 
     private final BudgetService budgetService;
 
-    @Operation(summary = "Get all budgets")
+    @Operation(summary = "Get all budgets for current user")
     @GetMapping
     public ResponseEntity<List<BudgetDto>> getAllBudgets() {
         List<BudgetDto> budgets = budgetService.findBudgetsByCurrentUser();
         return ResponseEntity.ok(budgets);
     }
 
-    @Operation(summary = "Get all budgets (admin)")
+    @Operation(summary = "Get all budgets (admin only)")
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BudgetDto>> getAllBudgetsAdmin() {
         List<BudgetDto> budgets = budgetService.findAllBudgets();
         return ResponseEntity.ok(budgets);

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -27,13 +28,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Slf4j
-@Tag(name = "Initialization", description = "Data initialization and seeding")
+@Tag(name = "Initialization", description = "Data initialization and seeding - No authentication required")
 public class InitController {
 
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ExpenseRepository expenseRepository;
     private final BudgetRepository budgetRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Operation(summary = "Initialize all mock data")
     @PostMapping("/all")
@@ -107,7 +109,7 @@ public class InitController {
             User admin = new User();
             admin.setUsername("admin");
             admin.setEmail("admin@trackexpenses.com");
-            admin.setPassword("admin123");
+            admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(Role.ADMIN);
             admin.setIsActive(true);
             admin.setCreatedAt(LocalDateTime.now());
@@ -119,7 +121,7 @@ public class InitController {
             User user = new User();
             user.setUsername("testuser");
             user.setEmail("user@trackexpenses.com");
-            user.setPassword("user123");
+            user.setPassword(passwordEncoder.encode("user123"));
             user.setRole(Role.USER);
             user.setIsActive(true);
             user.setCreatedAt(LocalDateTime.now());
@@ -131,7 +133,7 @@ public class InitController {
             User demoUser = new User();
             demoUser.setUsername("demo");
             demoUser.setEmail("demo@trackexpenses.com");
-            demoUser.setPassword("demo123");
+            demoUser.setPassword(passwordEncoder.encode("demo123"));
             demoUser.setRole(Role.USER);
             demoUser.setIsActive(true);
             demoUser.setCreatedAt(LocalDateTime.now());

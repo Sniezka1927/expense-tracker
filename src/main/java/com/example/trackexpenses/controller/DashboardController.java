@@ -8,6 +8,7 @@ import com.example.trackexpenses.service.ExpenseService;
 import com.example.trackexpenses.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(name = "Dashboard", description = "Analytics and reporting")
+@SecurityRequirement(name = "Bearer Authentication")
 public class DashboardController {
 
     private final ExpenseService expenseService;

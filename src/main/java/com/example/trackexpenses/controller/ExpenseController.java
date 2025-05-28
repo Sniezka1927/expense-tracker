@@ -6,11 +6,13 @@ import com.example.trackexpenses.dto.ExpenseDto;
 import com.example.trackexpenses.service.ExpenseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -24,19 +26,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(name = "Expenses", description = "Expense management")
+@SecurityRequirement(name = "Bearer Authentication")
 public class ExpenseController {
 
     private final ExpenseService expenseService;
 
-    @Operation(summary = "Get all expenses")
+    @Operation(summary = "Get all expenses for current user")
     @GetMapping
     public ResponseEntity<List<ExpenseDto>> getAllExpenses() {
         List<ExpenseDto> expenses = expenseService.findExpensesByCurrentUser();
         return ResponseEntity.ok(expenses);
     }
 
-    @Operation(summary = "Get all expenses (admin)")
+    @Operation(summary = "Get all expenses (admin only)")
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ExpenseDto>> getAllExpensesAdmin() {
         List<ExpenseDto> expenses = expenseService.findAllExpenses();
         return ResponseEntity.ok(expenses);
@@ -135,7 +139,7 @@ public class ExpenseController {
         return ResponseEntity.ok(expenses);
     }
 
-    @Operation(summary = "Get total expenses")
+    @Operation(summary = "Get total expenses for current user")
     @GetMapping("/reports/total")
     public ResponseEntity<BigDecimal> getTotalExpenses() {
         BigDecimal total = expenseService.getTotalExpensesForCurrentUser();

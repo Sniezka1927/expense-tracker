@@ -6,6 +6,9 @@ import com.example.trackexpenses.entity.Role;
 import com.example.trackexpenses.entity.User;
 import com.example.trackexpenses.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDto registerUser(UserRegistrationDto registrationDto) {
         if (userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {
@@ -32,6 +36,7 @@ public class UserService {
         User user = new User();
         user.setUsername(registrationDto.getUsername());
         user.setEmail(registrationDto.getEmail());
+        // Hasło już jest zaszyfrowane w AuthService
         user.setPassword(registrationDto.getPassword());
         user.setRole(Role.USER);
         user.setIsActive(true);
@@ -78,8 +83,15 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getCurrentUser() {
-        return userRepository.findByUsername("testuser")
-                .orElse(userRepository.findAll().stream().findFirst().orElse(null));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+            return null;
+        }
+
+        String username = authentication.getName();
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     public User getUserById(Integer userId) {
@@ -100,5 +112,4 @@ public class UserService {
         dto.setCreatedAt(user.getCreatedAt());
         return dto;
     }
-
 }
