@@ -5,6 +5,7 @@
 
 Expense Tracker to aplikacja zaprojektowana, aby pomóc użytkownikom śledzić i zarządzać swoimi wydatkami.
 Zbudowana przy użyciu Spring Boot, aplikacja zapewnia platformę do rejestrowania wydatków, ustawiania budżetów, kategoryzowania wydatków oraz generowania raportów.
+Aplikacja wykorzystuje Flyway do zarządzania migracjami bazy danych.
 
 ## 2. Struktura projektu
 
@@ -167,7 +168,7 @@ Po inicjalizacji dostępni są następujący użytkownicy:
 
 ## 6. Testowanie
 
-Aplikacja zawiera kompleksowe testy jednostkowe dla kontrolerów i serwisów. Testy wykorzystują JUnit 5, Mockito oraz framework testowy Spring, aby zapewnić prawidłowe działanie aplikacji.
+Aplikacja zawiera testy jednostkowe dla kontrolerów i serwisów. Testy wykorzystują JUnit 5, Mockito oraz framework testowy Spring.
 
 Pokrycie testami jest monitorowane za pomocą JaCoCo. Aby uruchomić testy i wygenerować raport pokrycia:
 
@@ -175,7 +176,7 @@ Pokrycie testami jest monitorowane za pomocą JaCoCo. Aby uruchomić testy i wyg
 ./mvnw clean test
 ```
 
-Raport pokrycia będzie dostępny w `target/site/jacoco/index.html`.
+![JaCoCo Raport](./jacoco.png)
 
 ## 7. Wzorce projektowe
 
@@ -184,5 +185,3 @@ W aplikacji wykorzystano następujące wzorce projektowe:
 1. **MVC Pattern** – separacja logiki aplikacji na entity, serwis i Controller
 2. **Repository Pattern** – abstrakcja dostępu do danych
 3. **DTO (Data Transfer Object)** – transfer danych między warstwami
-4. **Adapter Pattern** – konwersja między encjami a DTO
-5. **Singleton Pattern** – dla serwisów i repozytoriów
