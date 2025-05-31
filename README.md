@@ -5,6 +5,7 @@
 
 Expense Tracker to aplikacja zaprojektowana, aby pomóc użytkownikom śledzić i zarządzać swoimi wydatkami.
 Zbudowana przy użyciu Spring Boot, aplikacja zapewnia platformę do rejestrowania wydatków, ustawiania budżetów, kategoryzowania wydatków oraz generowania raportów.
+Aplikacja wykorzystuje Flyway do zarządzania migracjami bazy danych.
 
 ## 2. Struktura projektu
 
